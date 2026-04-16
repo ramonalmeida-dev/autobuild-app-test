@@ -20,20 +20,32 @@ type AppShellProps = {
   className?: string
 }
 
+function ShellBrand() {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="size-2 rounded-full bg-primary ring-2 ring-primary/20" aria-hidden />
+      <div>
+        <p className="text-sm font-semibold tracking-tight text-foreground">test-app-autobuild</p>
+        <p className="text-xs text-muted-foreground">Operação de semijoias</p>
+      </div>
+    </div>
+  )
+}
+
 function ShellNav({ mobile = false }: { mobile?: boolean }) {
   return (
-    <nav className={cn("flex items-center gap-1", mobile && "flex-col items-stretch")}> 
+    <nav className={cn("flex flex-col gap-1", mobile && "items-stretch")}>
       {appNavItems.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
             cn(
-              "rounded-md px-3 py-1.5 text-sm transition-colors",
+              "w-full rounded-md px-3 py-2 text-sm transition-colors",
               isActive
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
-              mobile && "px-2 py-2"
+              mobile && "px-2"
             )
           }
         >
@@ -46,29 +58,27 @@ function ShellNav({ mobile = false }: { mobile?: boolean }) {
 
 export function AppShell({ children, className }: AppShellProps) {
   return (
-    <div className={cn("flex min-h-svh flex-col bg-background", className)}>
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2.5">
-            <span className="size-2 rounded-full bg-primary ring-2 ring-primary/20" aria-hidden />
-            <div>
-              <p className="text-sm font-semibold tracking-tight text-foreground">test-app-autobuild</p>
-              <p className="text-xs text-muted-foreground">Operação de semijoias</p>
-            </div>
-          </div>
+    <div className={cn("flex min-h-svh bg-background", className)}>
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
+        <div className="border-b border-sidebar-border px-4 py-4">
+          <ShellBrand />
+        </div>
+        <div className="flex-1 p-3">
+          <ShellNav />
+        </div>
+      </aside>
 
-          <div className="hidden md:block">
-            <ShellNav />
-          </div>
-
-          <div className="md:hidden">
+      <div className="flex min-h-svh flex-1 flex-col">
+        <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:hidden">
+          <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-6">
+            <ShellBrand />
             <Sheet>
               <SheetTrigger asChild>
                 <Button type="button" variant="outline" size="icon-sm">
                   <Menu aria-hidden />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-72">
+              <SheetContent side="left" className="w-72">
                 <SheetHeader>
                   <SheetTitle>Navegação</SheetTitle>
                   <SheetDescription>Acesso rápido aos módulos operacionais.</SheetDescription>
@@ -79,9 +89,10 @@ export function AppShell({ children, className }: AppShellProps) {
               </SheetContent>
             </Sheet>
           </div>
-        </div>
-      </header>
-      <main className="flex-1">{children}</main>
+        </header>
+        <main className="flex-1">{children}</main>
+      </div>
+
       <Toaster position="bottom-right" richColors closeButton />
     </div>
   )
